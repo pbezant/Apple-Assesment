@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Agentic Developer Portal — Wireframes</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #f0eee9; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="wf-primitives.jsx"></script>
+<script type="text/babel" src="dir1-mission-control-v0.jsx"></script>
+<script type="text/babel" src="dir1-mission-control.jsx"></script>
+<script type="text/babel" src="dir2-command-palette.jsx"></script>
+<script type="text/babel" src="dir3-action-catalog.jsx"></script>
+<script type="text/babel" src="dir4-conversational.jsx"></script>
+<script type="text/babel" src="dir5-workflow-canvas.jsx"></script>
+<script type="text/babel" src="dir6-inline-on-repo.jsx"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "approvalMode": "interactive",
+  "showWriteupLink": true
+}/*EDITMODE-END*/;
+
+// Artboard size — same across all directions for cross-comparison
+const W = 720, H = 480;
+
+function App() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const m = t.approvalMode;
+
+  return (
+    <>
+      <DesignCanvas>
+        <DCSection id="intro" title="Agentic Developer Portal — Wireframe Exploration"
+          subtitle="6 directions × 6 screens · low/mid-fi · for a Platform/DevEx engineer running fleets of services">
+          <DCArtboard id="brief" label="Brief & system" width={760} height={H}>
+            <BriefCard />
+          </DCArtboard>
+          <DCArtboard id="legend" label="Legend & primitives" width={420} height={H}>
+            <LegendCard />
+          </DCArtboard>
+          <DCArtboard id="map" label="6 directions at a glance" width={520} height={H}>
+            <DirectionMap />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="d1" title="Direction 1 · Mission Control · v0 (original)"
+          subtitle="Frozen original 6-screen direction. Live, evolving version is in D1-sandbox.html.">
+          <DCArtboard id="d1-1" label="① Repo picker · fleet grid" width={W} height={H}><D1V0RepoPicker mode={m} /></DCArtboard>
+          <DCArtboard id="d1-2" label="② Trigger agent" width={W} height={H}><D1V0Trigger /></DCArtboard>
+          <DCArtboard id="d1-3" label="③ Repo insights" width={W} height={H}><D1V0Insights /></DCArtboard>
+          <DCArtboard id="d1-4" label="④ Live execution" width={W} height={H}><D1V0Live mode={m} /></DCArtboard>
+          <DCArtboard id="d1-5" label="⑤ Results · PR" width={W} height={H}><D1V0Results /></DCArtboard>
+          <DCArtboard id="d1-6" label="⑥ Fleet history" width={W} height={H}><D1V0History /></DCArtboard>
+        </DCSection>
+
+        <DCSection id="d2" title="Direction 2 · Command Palette"
+          subtitle="Keyboard-first. ⌘K is the homepage. Live execution is terminal-like. For people who type fast.">
+          <DCArtboard id="d2-1" label="① ⌘K palette" width={W} height={H}><D2Palette mode={m} /></DCArtboard>
+          <DCArtboard id="d2-2" label="② Repo info" width={W} height={H}><D2Insights /></DCArtboard>
+          <DCArtboard id="d2-3" label="③ Compose run" width={W} height={H}><D2Trigger /></DCArtboard>
+          <DCArtboard id="d2-4" label="④ Live · terminal" width={W} height={H}><D2Live mode={m} /></DCArtboard>
+          <DCArtboard id="d2-5" label="⑤ Results" width={W} height={H}><D2Results /></DCArtboard>
+          <DCArtboard id="d2-6" label="⑥ History" width={W} height={H}><D2History /></DCArtboard>
+        </DCSection>
+
+        <DCSection id="d3" title="Direction 3 · Action Catalog"
+          subtitle="Browse a gallery of agent recipes and point them at repos. Strong governance/checkpoint feel.">
+          <DCArtboard id="d3-1" label="① Recipe catalog" width={W} height={H}><D3Catalog mode={m} /></DCArtboard>
+          <DCArtboard id="d3-2" label="② Recipe + repo" width={W} height={H}><D3Insights /></DCArtboard>
+          <DCArtboard id="d3-3" label="③ Configure" width={W} height={H}><D3Trigger /></DCArtboard>
+          <DCArtboard id="d3-4" label="④ Live · step cards" width={W} height={H}><D3Live mode={m} /></DCArtboard>
+          <DCArtboard id="d3-5" label="⑤ Results · 3 PRs" width={W} height={H}><D3Results /></DCArtboard>
+          <DCArtboard id="d3-6" label="⑥ Runs by recipe" width={W} height={H}><D3History /></DCArtboard>
+        </DCSection>
+
+        <DCSection id="d4" title="Direction 4 · Conversational Workspace"
+          subtitle="Chat-led. Each repo has a thread. Tasks emerge from conversation, tools render inline.">
+          <DCArtboard id="d4-1" label="① Threads" width={W} height={H}><D4Threads mode={m} /></DCArtboard>
+          <DCArtboard id="d4-2" label="② Repo context" width={W} height={H}><D4Insights /></DCArtboard>
+          <DCArtboard id="d4-3" label="③ Plan proposed" width={W} height={H}><D4Trigger /></DCArtboard>
+          <DCArtboard id="d4-4" label="④ Live · in thread" width={W} height={H}><D4Live mode={m} /></DCArtboard>
+          <DCArtboard id="d4-5" label="⑤ Results · in thread" width={W} height={H}><D4Results /></DCArtboard>
+          <DCArtboard id="d4-6" label="⑥ All threads" width={W} height={H}><D4History /></DCArtboard>
+        </DCSection>
+
+        <DCSection id="d5" title="Direction 5 · Workflow Canvas"
+          subtitle="Node-based. The agent's plan is a graph; live execution animates through it. Inspectable.">
+          <DCArtboard id="d5-1" label="① Flows" width={W} height={H}><D5Canvas mode={m} /></DCArtboard>
+          <DCArtboard id="d5-2" label="② Context graph" width={W} height={H}><D5Insights /></DCArtboard>
+          <DCArtboard id="d5-3" label="③ Plan graph" width={W} height={H}><D5Trigger /></DCArtboard>
+          <DCArtboard id="d5-4" label="④ Live graph" width={W} height={H}><D5Live mode={m} /></DCArtboard>
+          <DCArtboard id="d5-5" label="⑤ Done · all green" width={W} height={H}><D5Results /></DCArtboard>
+          <DCArtboard id="d5-6" label="⑥ Flow runs" width={W} height={H}><D5History /></DCArtboard>
+        </DCSection>
+
+        <DCSection id="d6" title="Direction 6 · Inline-on-Repo"
+          subtitle="The repo IS the surface. Agent affordances woven into files, lines, PRs. Lowest learning curve.">
+          <DCArtboard id="d6-1" label="① Repo list" width={W} height={H}><D6Repos mode={m} /></DCArtboard>
+          <DCArtboard id="d6-2" label="② Repo home + agent rail" width={W} height={H}><D6Insights /></DCArtboard>
+          <DCArtboard id="d6-3" label="③ Agent on a file" width={W} height={H}><D6Trigger /></DCArtboard>
+          <DCArtboard id="d6-4" label="④ Live · inline edit" width={W} height={H}><D6Live mode={m} /></DCArtboard>
+          <DCArtboard id="d6-5" label="⑤ PR review · agent author" width={W} height={H}><D6Results /></DCArtboard>
+          <DCArtboard id="d6-6" label="⑥ Agent activity feed" width={W} height={H}><D6History /></DCArtboard>
+        </DCSection>
+
+        <DCSection id="recommendation" title="Recommendation & next steps"
+          subtitle="Where I'd take this next.">
+          <DCArtboard id="rec" label="Synthesis" width={760} height={H}>
+            <RecommendationCard />
+          </DCArtboard>
+        </DCSection>
+      </DesignCanvas>
+
+      <TweaksPanel title="Wireframe tweaks">
+        <TweakSection label="Approval model" />
+        <TweakRadio label="Mode"
+          value={t.approvalMode}
+          options={[
+            { value: 'fireforget', label: 'fire' },
+            { value: 'plan',       label: 'plan' },
+            { value: 'checkpoint', label: 'check' },
+            { value: 'interactive',label: 'inter' },
+          ]}
+          onChange={(v) => setTweak('approvalMode', v)} />
+        <div style={{ fontSize: 10.5, color: 'rgba(41,38,27,.6)', marginTop: -4 }}>
+          {{
+            fireforget: 'Fire-and-forget — agent runs unattended, you review the PR after.',
+            plan: 'Plan first — agent proposes, you approve, it executes.',
+            checkpoint: 'Checkpoints — agent pauses at key decisions for your sign-off.',
+            interactive: 'Interactive — interrupt, redirect, ask questions any time.',
+          }[t.approvalMode]}
+        </div>
+        <TweakSection label="Notes" />
+        <div style={{ fontSize: 10.5, color: 'rgba(41,38,27,.6)', lineHeight: 1.5 }}>
+          Drag artboards to reorder · click any artboard to focus · ←/→ inside focus to step through screens · ↑/↓ to jump direction · Esc to exit.
+        </div>
+      </TweaksPanel>
+    </>
+  );
+}
+
+function BriefCard() {
+  return (
+    <div className="wf" style={{ padding: 24, height: '100%', overflow:'hidden', display:'flex', flexDirection:'column', gap: 14 }}>
+      <div className="wf-h1" style={{ fontSize: 28 }}>Agentic Developer Portal</div>
+      <div className="wf-note" style={{ fontSize: 14 }}>
+        A small slice of an AI-native developer portal: pick a repo, view insights, trigger an agent task, watch it run.
+      </div>
+      <hr className="wf-divider-dashed" />
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap: 14 }}>
+        <div>
+          <div className="wf-label">audience</div>
+          <div className="wf-note">Platform / DevEx engineer running ~100+ services across many teams.</div>
+        </div>
+        <div>
+          <div className="wf-label">scale</div>
+          <div className="wf-note">Many agents in parallel — “fleet / mission-control”, not one-at-a-time.</div>
+        </div>
+        <div>
+          <div className="wf-label">approval</div>
+          <div className="wf-note">Fully interactive by default — interrupt, redirect, ask questions. Toggle to compare modes.</div>
+        </div>
+        <div>
+          <div className="wf-label">fidelity</div>
+          <div className="wf-note">Mid-fi · sketchy / handwritten · grayscale + one warm accent for "live".</div>
+        </div>
+      </div>
+      <hr className="wf-divider-dashed" />
+      <div className="wf-label">screens covered, per direction</div>
+      <div className="wf-mono" style={{ fontSize: 11, lineHeight: 1.8 }}>
+        ① pick repo &nbsp;→&nbsp; ② insights &nbsp;→&nbsp; ③ trigger &nbsp;→&nbsp; ④ live &nbsp;→&nbsp; ⑤ results &nbsp;→&nbsp; ⑥ history
+      </div>
+      <div className="wf-tiny" style={{ marginTop:'auto' }}>
+        write-up · see <span className="wf-mono">writeup.md</span> in the project &nbsp;·&nbsp; reasoning + decisions + recommendation
+      </div>
+    </div>
+  );
+}
+
+function LegendCard() {
+  return (
+    <div className="wf" style={{ padding: 18, height:'100%', display:'flex', flexDirection:'column', gap: 12 }}>
+      <div className="wf-h2">legend</div>
+      <div>
+        <div className="wf-label">status chips</div>
+        <div style={{ display:'flex', flexWrap:'wrap', gap: 4, marginTop: 6 }}>
+          <Status kind="idle" /><Status kind="queued" /><Status kind="running" />
+          <Status kind="paused" /><Status kind="waiting" /><Status kind="done" /><Status kind="failed" />
+        </div>
+      </div>
+      <div>
+        <div className="wf-label">progress</div>
+        <div style={{ marginTop: 6, display:'flex', flexDirection:'column', gap: 6 }}>
+          <Progress pct={32} />
+          <Progress marching />
+        </div>
+      </div>
+      <div>
+        <div className="wf-label">accent · "live / agent"</div>
+        <div className="wf-note" style={{ marginTop: 4 }}>
+          Single warm accent reserved for active agent surfaces — every direction uses it the same way so the eye finds running work fast.
+        </div>
+      </div>
+      <div>
+        <div className="wf-label">type</div>
+        <div className="wf-note" style={{ marginTop: 4 }}>
+          Caveat / Architects Daughter / Kalam for the sketchy hand · Cutive Mono for code & data.
+        </div>
+      </div>
+      <div>
+        <div className="wf-label">placeholders</div>
+        <Ph w="100%" h={40} label="charts, diffs and avatars use this striped placeholder" />
+      </div>
+    </div>
+  );
+}
+
+function DirectionMap() {
+  const dirs = [
+    ['①','Mission Control','fleet dashboard, telemetry-feel'],
+    ['②','Command Palette','keyboard-first, ⌘K-everything'],
+    ['③','Action Catalog','recipes you point at repos'],
+    ['④','Conversational','chat thread per repo'],
+    ['⑤','Workflow Canvas','agent plan as a graph'],
+    ['⑥','Inline-on-Repo','agent woven into the repo UI'],
+  ];
+  return (
+    <div className="wf" style={{ padding: 18, height: '100%', display:'flex', flexDirection:'column', gap: 10 }}>
+      <div className="wf-h2">six bets, one flow</div>
+      <div className="wf-note">
+        Each direction takes the same 6-step flow and re-frames it around a different mental model. Read across to compare.
+      </div>
+      {dirs.map(([n, t, s]) => (
+        <div key={n} className="wf-box" style={{ padding: 8, display:'flex', alignItems:'center', gap: 10 }}>
+          <span className="wf-h2" style={{ fontSize: 18, width: 22, color: WF.accent }}>{n}</span>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 13, fontWeight: 700 }}>{t}</div>
+            <div className="wf-tiny">{s}</div>
+          </div>
+          <span className="wf-mono wf-tiny">6 screens</span>
+        </div>
+      ))}
+      <div className="wf-tiny" style={{ marginTop:'auto' }}>tip · click an artboard label to expand it · ←/→ to step through screens</div>
+    </div>
+  );
+}
+
+function RecommendationCard() {
+  return (
+    <div className="wf" style={{ padding: 24, height:'100%', display:'flex', flexDirection:'column', gap: 12, overflow:'auto' }}>
+      <div className="wf-h1" style={{ fontSize: 26 }}>where I'd take it</div>
+      <div className="wf-note">
+        For a Platform / DevEx engineer running many services in parallel, the strongest synthesis is a <b>Mission Control shell</b> with <b>Conversational threads inside each repo</b> and a <b>⌘K palette as the keyboard-native shortcut</b>. The catalog and canvas become powerful add-ons, not the primary surface.
+      </div>
+      <hr className="wf-divider-dashed" />
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap: 14 }}>
+        <div>
+          <div className="wf-label">primary</div>
+          <div className="wf-note"><b>① Mission Control</b> as the home — the fleet view answers "what's happening?" before any other question. Live agent dock is always there.</div>
+        </div>
+        <div>
+          <div className="wf-label">inside the repo</div>
+          <div className="wf-note"><b>④ Conversational thread</b> per repo. Tasks emerge from dialogue and the agent narrates with inline tool calls + diffs.</div>
+        </div>
+        <div>
+          <div className="wf-label">shortcut layer</div>
+          <div className="wf-note"><b>② ⌘K palette</b> floats over everything — power users compose runs without clicks.</div>
+        </div>
+        <div>
+          <div className="wf-label">governance</div>
+          <div className="wf-note"><b>③ Catalog recipes</b> become reusable, audited templates surfaced inside the palette and the repo's "quick agent" rail.</div>
+        </div>
+      </div>
+      <hr className="wf-divider-dashed" />
+      <div className="wf-label">next steps</div>
+      <ol className="wf-note" style={{ margin: 0, paddingLeft: 18 }}>
+        <li>User-test the live-execution treatment (graph vs. step cards vs. terminal vs. chat) with 3-4 platform engineers.</li>
+        <li>Define the agent capability model so the trigger UI in any direction stays consistent.</li>
+        <li>Push direction ① + ④ to hi-fi and prototype the interrupt/redirect interaction at depth.</li>
+        <li>Decide policy defaults per action — which require <i>plan-first</i> by default, which can be <i>fire-and-forget</i>.</li>
+      </ol>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
