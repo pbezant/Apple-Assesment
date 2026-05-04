@@ -1,33 +1,48 @@
 /**
- * Mission Control — automated demo with live voiceover
+ * Mission Control — automated demo with AI voiceover
  *
  * Usage:
- *   1. Start dev server:  npm run dev
- *   2. Start screen recording (QuickTime → New Screen Recording, select browser window)
- *   3. Run:  npx tsx demo/record.ts
- *   4. Stop screen recording when the script finishes
+ *   1. Generate voice clips (once):  OPENAI_API_KEY=sk-... npx tsx demo/generate-voice.ts
+ *   2. Start dev server:             npm run dev
+ *   3. Start screen recording (QuickTime → New Screen Recording, select browser window)
+ *   4. Run:                          npx tsx demo/record.ts
+ *   5. Stop screen recording when the script prints "Demo complete"
  *
- * Voice:  macOS built-in TTS via the `say` command — no API key needed.
- *         Change VOICE below to any voice from: `say -v ?`
- *         Recommended: Samantha (en-US), Daniel (en-GB), Karen (en-AU)
+ * Audio: pre-generated MP3s in demo/audio/ played via macOS afplay (blocks until done).
+ *        Falls back to macOS `say` if a clip is missing.
  */
 
 import { chromium } from '@playwright/test'
-import { execSync, exec } from 'child_process'
+import { execSync } from 'child_process'
+import path from 'path'
+import { fileURLToPath } from 'url'
+import fs from 'fs'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // ── Config ────────────────────────────────────────────────────────────────────
-const BASE_URL = 'http://localhost:5175'
-const VOICE    = 'Samantha'   // run `say -v ?` to list all voices
-const RATE     = 185          // words per minute (default ~200, lower = slower/clearer)
-const W        = 1280
-const H        = 800
+const BASE_URL   = 'http://localhost:5173'
+const AUDIO_DIR  = path.join(__dirname, 'audio')
+const W = 1280
+const H = 800
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** Speak text and wait for it to finish before continuing */
+let clipIndex = 0
+
+/** Play the next pre-generated clip, or fall back to macOS say */
 function say(text: string) {
-  // Strip markdown-style emphasis for cleaner speech
-  const clean = text.replace(/\*\*/g, '').replace(/`([^`]+)`/g, '$1')
-  execSync(`say -v "${VOICE}" -r ${RATE} "${clean.replace(/"/g, "'")}"`)
+  clipIndex++
+  const num = String(clipIndex).padStart(2, '0')
+  const clipPath = path.join(AUDIO_DIR, `${num}.mp3`)
+
+  if (fs.existsSync(clipPath)) {
+    execSync(`afplay "${clipPath}"`)
+  } else {
+    // Fallback: macOS built-in TTS
+    const clean = text.replace(/\*\*/g, '').replace(/`([^`]+)`/g, '$1')
+    execSync(`say -v Samantha -r 185 "${clean.replace(/"/g, "'")}"`)
+    console.warn(`  ⚠ Missing clip ${num}.mp3 — used fallback say`)
+  }
 }
 
 /** Pause silently */
@@ -44,8 +59,12 @@ async function run() {
   await page.setViewportSize({ width: W, height: H })
 
   // ── Scene 1: Fleet view & search ──────────────────────────────────────────
-  say("Welcome to Mission Control — an agentic developer portal. The landing page shows your entire fleet of repos at a glance.")
+  // Navigate first, wait for the page to fully load, then start audio
   await page.goto(`${BASE_URL}/fleet`)
+  await page.waitForLoadState('networkidle')
+  await pause(800)
+
+  say("Welcome to Mission Control — an agentic developer portal. The landing page shows your entire fleet of repos at a glance.")
   await pause(1200)
 
   say("Each card shows the language, a 7-day activity sparkline, health status, and a live agent indicator if something is running right now.")
@@ -62,19 +81,16 @@ async function run() {
   await pause(800)
 
   say("Only repos with active CVEs. Let's reset back to the full fleet.")
-  await page.getByText(`all ${12}`).click()
+  await page.getByRole('button', { name: 'all 12' }).click()
   await pause(600)
 
   // ── Scene 2: Multi-select & batch actions ─────────────────────────────────
   say("Now for batch operations. Check the boxes to select multiple repos at once.")
-
-  const cards = page.locator('.grid > div')
-  // Check data-pipe (index 4), ml-features (2), api-gateway (9)
-  await page.locator('input[type="checkbox"]').nth(1).click()   // data-pipe
+  await page.locator('input[type="checkbox"]').nth(1).click()
   await pause(300)
-  await page.locator('input[type="checkbox"]').nth(2).click()   // ml-features
+  await page.locator('input[type="checkbox"]').nth(2).click()
   await pause(300)
-  await page.locator('input[type="checkbox"]').nth(3).click()   // api-gateway
+  await page.locator('input[type="checkbox"]').nth(3).click()
   await pause(600)
 
   say("Three repos selected. The batch action bar appears with options to scan for CVEs, upgrade dependencies, generate docs, or launch a custom agent task across all selected repos simultaneously.")
@@ -114,7 +130,6 @@ async function run() {
   say("A terminal step fails. The output expands instantly showing the exact error — colored just like your real shell.")
   await pause(2500)
 
-  // Click a failed or terminal step row to expand it
   const termStep = page.locator('text=terminal').first()
   if (await termStep.isVisible()) {
     await termStep.click()
@@ -134,13 +149,12 @@ async function run() {
     await viewPR.click()
     await pause(1000)
   } else {
-    // Navigate directly to the seed PR if the new run didn't produce one
     await page.goto(`${BASE_URL}/prs/482`)
     await pause(1000)
   }
 
   // ── Scene 6: PR review & rationale ───────────────────────────────────────
-  say("The agent opens a pull request reviewed exactly like any teammate's PR — title, branch info, checks, and a split diff.")
+  say("The agent opens a pull request reviewed exactly like any teammate's PR — title, branch info, checks passing, and a split diff.")
   await pause(2500)
 
   say("Inline, the agent explains why it made the change. You can give it a thumbs up or thumbs down and add a comment.")
